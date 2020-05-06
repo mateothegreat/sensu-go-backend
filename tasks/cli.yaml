@@ -9,4 +9,16 @@
 
 - name: "Configure sensuctl"
   become: "true"
-  shell: "sensuctl configure --non-interactive --api-url {{ sensu_backend.api.url }} --username {{ sensu_backend.auth.username }} --password {{ sensu_backend.auth.password }}"
+  command:
+    argv:
+      - "sensuctl"
+      - "configure"
+      - "--non-interactive"
+      - "--api-url"
+      - "{{ sensu_backend.api.url }}"
+      - "--username"
+      - "{{ sensu_backend.auth.username }}"
+      - "--password"
+      - "{{ sensu_backend.auth.password }}"
+  register: configure_result
+  changed_when: configure_result.rc == 0

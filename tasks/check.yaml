@@ -8,6 +8,7 @@
       - "info"
       - "{{ item.name }}"
   register: check_info_result
+  changed_when: check_info_result.rc == 0
   ignore_errors: "true"
   when: sensu_backend_delete_if_exists | bool
 
@@ -20,6 +21,8 @@
       - "delete"
       - "{{ item.name }}"
       - "--skip-confirm"
+  register: check_delete
+  changed_when: check_delete.rc == 0
   when: sensu_backend_delete_if_exists and check_info_result.rc == 0
 
 - name: "Create or update check ({{ item.name }})"
@@ -40,3 +43,5 @@
       - "{{ item.assets | join(',') }},sensu-ruby-runtime"
       - "--subscriptions"
       - "{{ item.subscriptions | join(',') }}"
+  register: check_create
+  changed_when: check_create.rc == 0

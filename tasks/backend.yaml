@@ -27,4 +27,14 @@
 
 - name: "Initialize backend"
   become: "true"
-  shell: "sensu-backend init --cluster-admin-username {{ sensu_backend.auth.username }} --cluster-admin-password {{ sensu_backend.auth.password }} || true"
+  command:
+    argv:
+      - "sensu-backend"
+      - "init"
+      - "--cluster-admin-username"
+      - "{{ sensu_backend.auth.username }}"
+      - "--cluster-admin-password"
+      - "{{ sensu_backend.auth.password }}"
+  register: init_result
+  changed_when: init_result.rc == 0
+  ignore_errors: "true"
