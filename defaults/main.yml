@@ -1,0 +1,71 @@
+---
+sensu_backend_delete_if_exists: "true"
+sensu_backend:
+  namespace: "default"
+  state_dir: "/var/lib/sensu/sensu-backend"
+  auth:
+    username: "admin"
+    password: "supersecret"
+  api:
+    url: "http://localhost:8080"
+    port: "8080"
+  agent:
+    port: "8081"
+  dashboard:
+    port: "8082"
+  default:
+    interval: "15"
+    timeout: "10"
+    handlers:
+      - "slack"
+  assets:
+    - name: "sensu/sensu-ruby-runtime"
+      rename: "sensu-ruby-runtime"
+    - name: "sensu-plugins/sensu-plugins-load-checks"
+      rename: "load"
+    - name: "sensu-plugins/sensu-plugins-disk-checks"
+      rename: "disk"
+    - name: "sensu-plugins/sensu-plugins-io-checks"
+      rename: "io"
+    - name: "sensu-plugins/sensu-plugins-memory-checks"
+      rename: "memory"
+    - name: "sensu-plugins/sensu-plugins-process-checks"
+      rename: "processes"
+    - name: "sensu-plugins/sensu-plugins-http"
+      rename: "http"
+    - name: "sensu-plugins/sensu-plugins-redis"
+      rename: "redis"
+    - name: "sensu-plugins/sensu-plugins-elasticsearch"
+      rename: "elasticsearch"
+    - name: "sensu-plugins/sensu-plugins-influxdb"
+      rename: "influxdb"
+    - name: "betorvs/sensu-opsgenie-handler"
+      rename: "opsgenie"
+    - name: "sensu/sensu-slack-handler"
+      rename: "slack"
+    - name: "sensu-plugins/sensu-plugins-aws"
+      rename: "aws"
+  checks:
+    - name: "disk"
+      command: "check-disk-usage.rb -w 70 -c 80"
+      assets: [ "disk" ]
+      subscriptions: [ "all" ]
+    - name: "memory"
+      command: "check-memory.rb -w 75 -c 90"
+      assets: [ "memory" ]
+      subscriptions: [ "all" ]
+    - name: "node_exporter"
+      command: "check-process.rb -W 1 -c 2 -p 'node_exporter'"
+      assets: [ "processes" ]
+      subscriptions: [ "all" ]
+    - name: "filebeat"
+      command: "check-process.rb -W 1 -c 2 -p 'filebeat'"
+      assets: [ "processes" ]
+      subscriptions: [ "all" ]
+  handlers:
+    - name: "opsgenie"
+      env_vars:
+        - "OPSGENIE_AUTHTOKEN=changeme"
+        - "OPSGENIE_TEAM=changeme"
+      filters:
+        - "is_incident"

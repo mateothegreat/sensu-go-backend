@@ -1,0 +1,30 @@
+---
+
+- name: "Install sensu-go-backend package"
+  become: "true"
+  yum:
+    name: "sensu-go-backend"
+    enablerepo: "sensu_stable"
+    state: "latest"
+
+- name: "Install /etc/sensu/backend.yml configuration file"
+  become: "true"
+  template:
+    src: "backend.yml.j2"
+    dest: "/etc/sensu/backend.yml"
+
+- name: "enable service"
+  become: "true"
+  systemd:
+    name: "sensu-backend"
+    enabled: "yes"
+
+- name: "restart service"
+  become: "true"
+  systemd:
+    name: "sensu-backend"
+    state: "restarted"
+
+- name: "Initialize backend"
+  become: "true"
+  shell: "sensu-backend init --cluster-admin-username {{ sensu_backend.auth.username }} --cluster-admin-password {{ sensu_backend.auth.password }} || true"

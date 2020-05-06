@@ -1,0 +1,12 @@
+---
+
+- name: "Install sensu-go-cli package"
+  become: "true"
+  yum:
+    name: "sensu-go-cli"
+    enablerepo: "sensu_stable"
+    state: "present"
+
+- name: "Configure sensuctl"
+  become: "true"
+  shell: "sensuctl configure --non-interactive --api-url {{ sensu_backend.api.url }} --username {{ sensu_backend.auth.username }} --password {{ sensu_backend.auth.password }}"

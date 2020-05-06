@@ -1,0 +1,6 @@
+---
+
+- name: "Install sensu go assets"
+  become: "true"
+  shell: "sensuctl --api-url {{ sensu_backend.api.url }} --namespace {{ sensu_backend.namespace }} asset add {{ item.name }} -r {{ item.rename }}"
+  with_items: "{{ sensu_backend.assets }}"

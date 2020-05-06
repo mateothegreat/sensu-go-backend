@@ -1,0 +1,6 @@
+---
+- import_tasks: "backend.yaml"
+- import_tasks: "cli.yaml"
+- import_tasks: "assets.yaml"
+- import_tasks: "checks.yaml"
+- import_tasks: "handlers.yaml"

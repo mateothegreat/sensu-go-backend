@@ -1,0 +1,12 @@
+---
+
+- name: "Delete sensu checks (if exists)"
+  become: "true"
+  shell: "sensuctl check info {{ item.name }} && sensuctl check delete {{ item.name }} --skip-confirm || true"
+  with_items: "{{ sensu_backend.checks }}"
+  when: sensu_backend_delete_if_exists | bool
+
+- name: "Create sensu checks"
+  become: "true"
+  shell: "sensuctl check create {{ item.name }} --command \"{{ item.command }}\" --handlers slack --interval {{ item.interval | default('15') }} --runtime-assets {{ item.assets | join(',') }},sensu-ruby-runtime --subscriptions {{ item.subscriptions | join(',') }}"
+  with_items: "{{ sensu_backend.checks }}"
