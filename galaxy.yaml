@@ -1,0 +1,13 @@
+namespace: "mateothegreat"
+name: "sensu_go_backend"
+version: "0.0.1"
+readme: "README.md"
+authors:
+  - "Matthew Davis (https://matthewdavis.io)"
+description: "Install & configure the sensu go backend."
+license: ["MIT"]
+license_file: "COPYING"
+tags: ["monitoring", "sensu", "sensu go"]
+repository: "https://github.com/mateothegreat/sensu-go-backend.git"
+homepage: "https://github.com/mateothegreat/sensu-go-backend"
+issues: "https://github.com/mateothegreat/sensu-go-backend/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc"
