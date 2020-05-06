@@ -7,7 +7,7 @@ authors:
 description: "Install & configure the sensu go backend."
 license: ["MIT"]
 license_file: "COPYING"
-tags: ["monitoring", "sensu", "sensu go"]
+tags: ["monitoring", "sensu"]
 repository: "https://github.com/mateothegreat/sensu-go-backend.git"
 homepage: "https://github.com/mateothegreat/sensu-go-backend"
 issues: "https://github.com/mateothegreat/sensu-go-backend/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc"
