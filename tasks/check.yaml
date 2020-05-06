@@ -1,0 +1,42 @@
+---
+- name: "See if check exists  ({{ item.name }})"
+  become: "true"
+  command:
+    argv:
+      - "sensuctl"
+      - "check"
+      - "info"
+      - "{{ item.name }}"
+  register: check_info_result
+  ignore_errors: "true"
+  when: sensu_backend_delete_if_exists | bool
+
+- name: "Delete check if it exists ({{ item.name }})"
+  become: "true"
+  command:
+    argv:
+      - "sensuctl"
+      - "check"
+      - "delete"
+      - "{{ item.name }}"
+      - "--skip-confirm"
+  when: sensu_backend_delete_if_exists and check_info_result.rc == 0
+
+- name: "Create or update check ({{ item.name }})"
+  become: "true"
+  command:
+    argv:
+      - "sensuctl"
+      - "check"
+      - "create"
+      - "{{ item.name }}"
+      - "--command"
+      - "{{ item.command }}"
+      - "--handlers"
+      - "slack"
+      - "--interval"
+      - "{{ item.interval | default('15') }}"
+      - "--runtime-assets"
+      - "{{ item.assets | join(',') }},sensu-ruby-runtime"
+      - "--subscriptions"
+      - "{{ item.subscriptions | join(',') }}"

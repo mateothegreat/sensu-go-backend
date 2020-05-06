@@ -1,0 +1,42 @@
+---
+
+- name: "See if handler exists ({{ item.name }})"
+  become: "true"
+  command:
+    argv:
+      - "sensuctl"
+      - "handler"
+      - "info"
+      - "{{ item.name }}"
+  when: sensu_backend_delete_if_exists | bool
+  register: handler_exists
+
+- name: "Delete handler if it exists ({{ item.name }})"
+  become: "true"
+  command:
+    argv:
+      - "sensuctl"
+      - "handler"
+      - "delete"
+      - "{{ item.name }}"
+      - "--skip-confirm"
+  when: sensu_backend_delete_if_exists and check_info_result.rc == 0
+
+- name: "Create sensu handler ({{ item.name }})"
+  become: "true"
+  command:
+    argv:
+      - "sensuctl"
+      - "handler"
+      - "create"
+      - "{{ item.name }}"
+      - "--command"
+      - "{{ item.name }}"
+      - "--handlers"
+      - "slack"
+      - "--env-vars"
+      - "{{ item.env_vars | join(',') }}"
+      - "--filters"
+      - "{{ item.filters | join(',') }}"
+      - "--type"
+      - "{{ item.type | default('pipe') }}"
