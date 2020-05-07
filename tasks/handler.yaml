@@ -11,7 +11,7 @@
   register: handler_exists
   changed_when: handler_exists.rc == 0
   ignore_errors: "true"
-  when: sensu_backend_delete_if_exists | bool
+  when: sensu_backend.delete_if_exists | bool
 
 - name: "Delete handler if it exists ({{ item.name }})"
   become: "true"
@@ -24,7 +24,7 @@
       - "--skip-confirm"
   register: delete_result
   changed_when: delete_result.rc == 0
-  when: sensu_backend_delete_if_exists and handler_exists.rc == 0
+  when: sensu_backend.delete_if_exists and handler_exists.rc == 0
 
 - name: "Create sensu handler ({{ item.name }})"
   become: "true"

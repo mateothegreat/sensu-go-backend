@@ -1,4 +1,8 @@
----
+- name: "Install sensu go repo"
+  become: "true"
+  copy:
+    src: "sensu.repo"
+    dest: "/etc/yum.repos.d/sensu.repo"
 
 - name: "Install sensu-go-backend package"
   become: "true"
