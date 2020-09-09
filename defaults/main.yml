@@ -18,53 +18,119 @@ sensu_backend:
     handlers:
       - "slack"
   assets:
+
     - name: "sensu/sensu-ruby-runtime"
       rename: "sensu-ruby-runtime"
+      namespaces: [ "apps", "cam", "mlfabric", "pulse-corona", "relationalgraph", "sandbox" ]
     - name: "sensu-plugins/sensu-plugins-load-checks"
       rename: "load"
+      namespaces: [ "apps", "cam", "mlfabric", "pulse-corona", "relationalgraph", "sandbox" ]
     - name: "sensu-plugins/sensu-plugins-disk-checks"
       rename: "disk"
+      namespaces: [ "apps", "cam", "mlfabric", "pulse-corona", "relationalgraph", "sandbox" ]
     - name: "sensu-plugins/sensu-plugins-io-checks"
       rename: "io"
+      namespaces: [ "apps", "cam", "mlfabric", "pulse-corona", "relationalgraph", "sandbox" ]
     - name: "sensu-plugins/sensu-plugins-memory-checks"
       rename: "memory"
+      namespaces: [ "apps", "cam", "mlfabric", "pulse-corona", "relationalgraph", "sandbox" ]
+    - name: "sensu-plugins/sensu-plugins-network-checks"
+      rename: "network"
+      namespaces: [ "apps", "cam", "mlfabric", "pulse-corona", "relationalgraph", "sandbox" ]
     - name: "sensu-plugins/sensu-plugins-process-checks"
       rename: "processes"
+      namespaces: [ "apps", "cam", "mlfabric", "pulse-corona", "relationalgraph", "sandbox" ]
     - name: "sensu-plugins/sensu-plugins-http"
       rename: "http"
+      namespaces: [ "apps", "cam", "mlfabric", "pulse-corona", "relationalgraph", "sandbox" ]
     - name: "sensu-plugins/sensu-plugins-redis"
       rename: "redis"
+      namespaces: [ "apps", "cam", "mlfabric", "pulse-corona", "relationalgraph", "sandbox" ]
     - name: "sensu-plugins/sensu-plugins-elasticsearch"
       rename: "elasticsearch"
+      namespaces: [ "apps", "cam", "mlfabric", "pulse-corona", "relationalgraph", "sandbox" ]
     - name: "sensu-plugins/sensu-plugins-influxdb"
       rename: "influxdb"
+      namespaces: [ "apps", "cam", "mlfabric", "pulse-corona", "relationalgraph", "sandbox" ]
     - name: "betorvs/sensu-opsgenie-handler"
       rename: "opsgenie"
-    - name: "sensu/sensu-slack-handler"
-      rename: "slack"
+      namespaces: [ "apps", "cam", "mlfabric", "pulse-corona", "relationalgraph", "sandbox" ]
     - name: "sensu-plugins/sensu-plugins-aws"
       rename: "aws"
+      namespaces: [ "apps", "cam", "mlfabric", "pulse-corona", "relationalgraph", "sandbox" ]
+
   checks:
+
     - name: "disk"
+      namespaces: [ "default", "cam", "pulse-corona", "relationalgraph", "mlfabric" ]
       command: "check-disk-usage.rb -w 70 -c 80"
       assets: [ "disk" ]
       subscriptions: [ "all" ]
+
     - name: "memory"
+      namespaces: [ "default", "cam", "pulse-corona", "relationalgraph", "mlfabric" ]
       command: "check-memory.rb -w 75 -c 90"
       assets: [ "memory" ]
       subscriptions: [ "all" ]
+
     - name: "node_exporter"
-      command: "check-process.rb -W 1 -c 2 -p 'node_exporter'"
+      namespaces: [ "default", "cam", "pulse-corona", "relationalgraph", "mlfabric" ]
+      command: "check-process.rb -W 1 -c 2 -p 'prometheus-exporter-node'"
       assets: [ "processes" ]
       subscriptions: [ "all" ]
+
     - name: "filebeat"
+      namespaces: [ "default", "cam", "pulse-corona", "relationalgraph", "mlfabric" ]
       command: "check-process.rb -W 1 -c 2 -p 'filebeat'"
       assets: [ "processes" ]
       subscriptions: [ "all" ]
+
+    - name: "elasticsearch-node-status"
+      namespaces: [ "mlfabric" ]
+      command: "check-es-node-status.rb --host $(ip -o route get to 1.1.1.1 | sed -n 's/.*src \\([0-9.]\\+\\).*/\\1/p')"
+      assets: [ "elasticsearch" ]
+      subscriptions: [ "elasticsearch" ]
+
+    - name: "elasticsearch-rest-api"
+      namespaces: [ "mlfabric" ]
+      command: "check-http.rb -u http://$(ip -o route get to 1.1.1.1 | sed -n 's/.*src \\([0-9.]\\+\\).*/\\1/p'):9200"
+      assets: [ "http" ]
+      subscriptions: [ "elasticsearch" ]
+
+    - name: "elasticsearch-kibana-ui"
+      namespaces: [ "mlfabric" ]
+      command: "check-http.rb -u http://$(ip -o route get to 1.1.1.1 | sed -n 's/.*src \\([0-9.]\\+\\).*/\\1/p'):5601/app/home"
+      assets: [ "http" ]
+      subscriptions: [ "kibana" ]
+
+    - name: "app-mlfabric-ui"
+      namespaces: [ "apps" ]
+      command: "/usr/lib64/nagios/plugins/check_http -H mlfabric.moodysanalytics.com"
+      assets: [ "http" ]
+      subscriptions: [ "apps" ]
+
+    - name: "app-mlfabric-api"
+      namespaces: [ "apps" ]
+      command: "/usr/lib64/nagios/plugins/check_http -H api.mlfabric.moodysanalytics.com -e 403"
+      assets: [ "http" ]
+      subscriptions: [ "apps" ]
+
+    - name: "app-pulse-coronra-ui"
+      namespaces: [ "apps" ]
+      command: "/usr/lib64/nagios/plugins/check_http -H pulse.moodysanalytics.com"
+      assets: [ "http" ]
+      subscriptions: [ "apps" ]
+
+    - name: "app-pulse-corona-api"
+      namespaces: [ "apps" ]
+      command: "/usr/lib64/nagios/plugins/check_http --ssl -H lsclydaje0.execute-api.us-east-1.amazonaws.com -u /prod/top-issuers -e 403"
+      assets: [ "http" ]
+      subscriptions: [ "apps" ]
+
   handlers:
     - name: "opsgenie"
       env_vars:
-        - "OPSGENIE_AUTHTOKEN=changeme"
-        - "OPSGENIE_TEAM=changeme"
+        - "OPSGENIE_AUTHTOKEN=<your api token>"
+        - "OPSGENIE_TEAM=<your team>"
       filters:
         - "is_incident"

@@ -1,0 +1,19 @@
+---
+- name: "Install sensu go asset \"{{ asset.name }}\" for namespace \"{{ namespace }}\""
+  become: "true"
+  command:
+    argv:
+      - "sensuctl"
+      - "--api-url"
+      - "{{ sensu_backend.api.url }}"
+      - "--namespace"
+      - "{{ namespace }}"
+      - "asset"
+      - "add"
+      - "{{ asset.name }}"
+      - "-r"
+      - "{{ asset.rename }}"
+      - "--timeout"
+      - "1m"
+  register: create_result
+  changed_when: create_result.rc == 0

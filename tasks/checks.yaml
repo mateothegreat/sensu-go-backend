@@ -1,4 +1,6 @@
 ---
 - name: "Create checks"
-  include_tasks: "check.yaml"
-  with_items: "{{ sensu_backend.checks }}"
+  include_tasks: "checks-namespaces.yaml"
+  loop: "{{ sensu_backend.checks }}"
+  loop_control:
+    loop_var: "check"

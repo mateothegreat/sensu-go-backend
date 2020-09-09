@@ -1,47 +1,53 @@
 ---
-- name: "See if check exists  ({{ item.name }})"
+- name: "See if check exists  ({{ check.name }})"
   become: "true"
   command:
     argv:
       - "sensuctl"
       - "check"
       - "info"
-      - "{{ item.name }}"
+      - "{{ check.name }}"
+      - "--namespace"
+      - "{{ namespace }}"
   register: check_info_result
   changed_when: check_info_result.rc == 0
   ignore_errors: "true"
   when: sensu_backend.delete_if_exists | bool
 
-- name: "Delete check if it exists ({{ item.name }})"
+- name: "Delete check if it exists ({{ check.name }})"
   become: "true"
   command:
     argv:
       - "sensuctl"
       - "check"
       - "delete"
-      - "{{ item.name }}"
+      - "{{ check.name }}"
       - "--skip-confirm"
+      - "--namespace"
+      - "{{ namespace }}"
   register: check_delete
   changed_when: check_delete.rc == 0
   when: sensu_backend.delete_if_exists and check_info_result.rc == 0
 
-- name: "Create or update check ({{ item.name }})"
+- name: "Create or update check ({{ check.name }})"
   become: "true"
   command:
     argv:
       - "sensuctl"
       - "check"
       - "create"
-      - "{{ item.name }}"
+      - "{{ check.name }}"
+      - "--namespace"
+      - "{{ namespace }}"
       - "--command"
-      - "{{ item.command }}"
+      - "{{ check.command }}"
       - "--handlers"
       - "slack"
       - "--interval"
-      - "{{ item.interval | default('15') }}"
+      - "{{ check.interval | default('15') }}"
       - "--runtime-assets"
-      - "{{ item.assets | join(',') }},sensu-ruby-runtime"
+      - "{{ check.assets | join(',') }},sensu-ruby-runtime"
       - "--subscriptions"
-      - "{{ item.subscriptions | join(',') }}"
+      - "{{ check.subscriptions | join(',') }}"
   register: check_create
   changed_when: check_create.rc == 0

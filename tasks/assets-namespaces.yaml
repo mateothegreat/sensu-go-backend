@@ -1,0 +1,6 @@
+---
+- name: "Create namespaced assets"
+  include_tasks: "assets-namespaces-asset.yaml"
+  loop: "{{ asset.namespaces }}"
+  loop_control:
+    loop_var: "namespace"

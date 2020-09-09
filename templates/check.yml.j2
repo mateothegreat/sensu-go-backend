@@ -1,0 +1,11 @@
+type: CheckConfig
+api_version: core/v2
+metadata:
+    name: {{ check.name }}
+    namespace: {{ check.namespace }}
+spec:
+    command: collect.sh
+    handlers: {{ check.handlers | to_yaml }}
+    interval: {{ check.interval }}
+    publish: true
+    subscriptions: {{ check.subscriptions | to_yaml }}

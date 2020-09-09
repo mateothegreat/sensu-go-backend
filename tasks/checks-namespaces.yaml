@@ -1,0 +1,6 @@
+---
+- name: "Create namespaced checks"
+  include_tasks: "checks-namespaces-check.yaml"
+  loop: "{{ check.namespaces }}"
+  loop_control:
+    loop_var: "namespace"
