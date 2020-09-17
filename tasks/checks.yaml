@@ -1,5 +1,3 @@
-- debug: msg="{{ sensu_backend.checks }}"
----
 - name: "Create checks"
   include_tasks: "checks-namespaces.yaml"
   loop: "{{ sensu_backend.checks }}"
