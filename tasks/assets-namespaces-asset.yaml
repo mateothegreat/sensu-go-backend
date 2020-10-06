@@ -1,4 +1,3 @@
----
 - name: "Install sensu go asset \"{{ asset.name }}\" for namespace \"{{ namespace }}\""
   become: "true"
   command:

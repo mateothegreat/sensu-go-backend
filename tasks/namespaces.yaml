@@ -1,0 +1,8 @@
+- name: "Create sensu namespace(s)"
+  command:
+    argv:
+      - "sensuctl"
+      - "namespace"
+      - "create"
+      - "{{ item }}"
+  loop: "{{ sensu_backend.namespaces }}"

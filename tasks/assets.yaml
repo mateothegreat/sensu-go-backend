@@ -1,8 +1,3 @@
----
-
-- debug: msg="{{ sensu_backend }}"
-- debug: msg="{{ sensu_backend.assets }}"
-
 - name: "Create assets"
   include_tasks: "assets-namespaces.yaml"
   loop: "{{ sensu_backend.assets }}"
