@@ -6,3 +6,4 @@
       - "create"
       - "{{ item }}"
   loop: "{{ sensu_backend.namespaces }}"
+  ignore_errors: "true"
