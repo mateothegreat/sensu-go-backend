@@ -1,12 +1,10 @@
-- name: "Create sensu namespace(s)"
+- name: "Create sensu namespace(s) ({{ sensu_backend.namespaces }})"
+  become: "true"
   command:
     argv:
       - "sensuctl"
       - "namespace"
       - "create"
       - "{{ item }}"
-      - "--api-url"
-      - "{{ sensu_backend.api.url }}"
-      - "{{ sensu_backend.auth.password }}"
   loop: "{{ sensu_backend.namespaces }}"
   ignore_errors: "true"
